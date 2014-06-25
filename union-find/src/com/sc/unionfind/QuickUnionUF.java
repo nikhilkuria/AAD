@@ -1,5 +1,8 @@
 package com.sc.unionfind;
 
+import com.princeton.stdlib.StdIn;
+import com.princeton.stdlib.StdOut;
+
 /**
  *  The <tt>QuickUnionUF</tt> class represents a union-find data structure.
  *  It supports the <em>union</em> and <em>find</em> operations, along with

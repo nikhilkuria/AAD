@@ -1,5 +1,8 @@
 package com.sc.unionfind;
 
+import com.princeton.stdlib.StdIn;
+import com.princeton.stdlib.StdOut;
+
 /****************************************************************************
  *  Compilation:  javac QuickFindUF.java
  *  Execution:  java QuickFindUF < input.txt
