@@ -6,36 +6,51 @@ public class Percolation {
 	private int size;
 	private int originCell;
 	private int finalCell;
+	private boolean[] openCells;
 	
 	public Percolation(int size) {
 		this.size = size;
 		originCell = 0;
 		finalCell = size*size+1;
 		weightedQuickUnionUF = new WeightedQuickUnionUF(size*size+2);
-		
-		//link to the imaginary origin node to the top row
-		for (int index = 1; index <= size; index++) {
-			weightedQuickUnionUF.union(originCell, index);
-		}
-		//link to the imaginary final node to the bottom row
-		for (int index = size*(size-1)+1; index <= size*size;  index ++){
-			weightedQuickUnionUF.union(index, finalCell);
-		}
+		openCells = new boolean[size*size+1];
 	}
 
 	public void open(int xOrdinate, int yOrdinate) {
 		// open site (row i, column j) if it is not already
 		int cellIndex = getIndex(xOrdinate, yOrdinate);
+		openCells[cellIndex] = true;
+		//System.out.println(cellIndex);
+		connectToMockNodes(cellIndex);
 		for (int[] neighbour : getNeighbours(xOrdinate, yOrdinate)) {
 			if(isOrdinatesOutBounds(neighbour[0], neighbour[1])){
 				int neighbourIndex = getIndex(neighbour[0], neighbour[1]);
-				weightedQuickUnionUF.union(cellIndex, neighbourIndex);
+				//System.out.println("Connecting "+cellIndex+" to "+neighbourIndex);
+				if(isOpen(neighbour[0], neighbour[1])){
+					weightedQuickUnionUF.union(cellIndex, neighbourIndex);
+				}
+				//connectToMockNodes(neighbourIndex);
 			}
+		}
+		
+	}
+
+	private void connectToMockNodes(int cellIndex) {
+		//Connecting to mock initial node
+		if(cellIndex<=size){
+			weightedQuickUnionUF.union(originCell, cellIndex);
+			//System.out.println("Connecting "+cellIndex+" to "+originCell);
+		}
+		//Connection to mock final node
+		if(cellIndex>(size*(size-1))){
+			weightedQuickUnionUF.union(cellIndex, finalCell);
+			//System.out.println("Connecting "+cellIndex+" to "+finalCell);
+
 		}
 	}
 
 	public boolean isOpen(int xOrdinate, int yOrdinate) {
-		int cellIndex = getIndex(xOrdinate, yOrdinate);
+/*		int cellIndex = getIndex(xOrdinate, yOrdinate);
 		for (int[] neighbour : getNeighbours(xOrdinate, yOrdinate)) {
 			if(isOrdinatesOutBounds(neighbour[0], neighbour[1])){
 				int neighbourIndex = getIndex(neighbour[0], neighbour[1]);
@@ -43,8 +58,8 @@ public class Percolation {
 					return true;
 				}
 			}
-		}
-		return false;
+		}*/
+		return openCells[getIndex(xOrdinate, yOrdinate)];
 
 	}
 

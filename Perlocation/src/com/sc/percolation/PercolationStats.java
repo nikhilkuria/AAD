@@ -9,24 +9,35 @@ public class PercolationStats {
 	
 	// perform T independent computational experiments on an N-by-N grid
 	public PercolationStats(int size, int experiments) {
-		Percolation percolation = new Percolation(size);
-		int totalCells = size*size;
+		percolationThresholds = new double[experiments];
+		double totalCells = size*size;
 		//Perform the simulation experiments amout of time
 		for (int expIndex = 0; expIndex < experiments; expIndex++) {
-			int openCells = 0;
+			Percolation percolation = new Percolation(size);
+			double openCells = 0;
 			double percolationThreshold = 0;
 			do{
 				//Create a random position in the percolation Grid
 				int xOrdinate = StdRandom.uniform(size);
 				int yOrdinate = StdRandom.uniform(size);
-				System.out.println("Opening Cell "+xOrdinate+", "+yOrdinate);
-				percolation.open(xOrdinate, yOrdinate);
-				openCells ++ ;
+				if(!percolation.isOpen(xOrdinate, yOrdinate)){
+					percolation.open(xOrdinate, yOrdinate);
+					openCells ++ ;
+				}
 			}while(!percolation.percolates());
-			System.out.println("-----------Perlocated-----------");
 			percolationThreshold = openCells/totalCells;
-			percolationThresholds[percolationThresholds.length]=percolationThreshold;
+			percolationThresholds[expIndex]=percolationThreshold;
 		}
+/*		for (int index : new int[]{21,7,11,18,22,15,12,10,7,19,2}) {
+			Percolation percolation = new Percolation(size);
+			int xCod = index/5;
+			int yCod = (index-1)%5;
+			percolation.open(xCod, yCod);
+			if(percolation.percolates()){
+				System.out.println("Done");
+			}
+			
+		}*/
 	}
 
 	// sample mean of percolation threshold
@@ -52,6 +63,7 @@ public class PercolationStats {
 
 	// test client, described below
 	public static void main(String[] args) {
-		PercolationStats percolationStats= new PercolationStats(3, 1);
+		PercolationStats percolationStats= new PercolationStats(2, 100000);
+		System.out.println(percolationStats.mean());
 	}
 }
