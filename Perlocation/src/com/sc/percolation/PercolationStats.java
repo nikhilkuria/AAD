@@ -6,10 +6,12 @@ import com.princeton.stdlib.StdStats;
 public class PercolationStats {
 	
 	private double[] percolationThresholds;
+	private int experiments;
 	
 	// perform T independent computational experiments on an N-by-N grid
 	public PercolationStats(int size, int experiments) {
 		percolationThresholds = new double[experiments];
+		this.experiments = experiments;
 		double totalCells = size*size;
 		//Perform the simulation experiments amout of time
 		for (int expIndex = 0; expIndex < experiments; expIndex++) {
@@ -52,12 +54,12 @@ public class PercolationStats {
 
 	// returns lower bound of the 95% confidence interval
 	public double confidenceLo() {
-		return 0;
+		return (mean()-((1.96*stddev())/Math.sqrt(experiments)));
 	}
 
 	// returns upper bound of the 95% confidence interval
 	public double confidenceHi() {
-		return 0;
+		return (mean()+((1.96*stddev())/Math.sqrt(experiments)));
 		
 	}
 
@@ -65,5 +67,9 @@ public class PercolationStats {
 	public static void main(String[] args) {
 		PercolationStats percolationStats= new PercolationStats(2, 100000);
 		System.out.println(percolationStats.mean());
+		System.out.println(percolationStats.stddev());
+		System.out.println(percolationStats.confidenceLo());
+		System.out.println(percolationStats.confidenceHi());
+
 	}
 }
