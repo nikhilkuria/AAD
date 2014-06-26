@@ -1,26 +1,54 @@
 package com.sc.percolation;
 
+import com.princeton.stdlib.StdRandom;
+import com.princeton.stdlib.StdStats;
+
 public class PercolationStats {
-	   public PercolationStats(int N, int T) {
-		   // perform T independent computational experiments on an N-by-N grid
-	   }
-	   public double mean()             {
-		return 0;
-		   // sample mean of percolation threshold
-	   }
-	   public double stddev()      {
-		return 0;
-		   // sample standard deviation of percolation threshold
-	   }
-	   public double confidenceLo()   {
-		return 0;
-		   // returns lower bound of the 95% confidence interval
-	   }
-	   public double confidenceHi()     {
-		return 0;
-		   // returns upper bound of the 95% confidence interval
-	   }
-	   public static void main(String[] args) {  // test client, described below
-		   
-	   }
+	
+	private double[] percolationThresholds;
+	
+	// perform T independent computational experiments on an N-by-N grid
+	public PercolationStats(int size, int experiments) {
+		Percolation percolation = new Percolation(size);
+		int totalCells = size*size;
+		//Perform the simulation experiments amout of time
+		for (int expIndex = 0; expIndex < experiments; expIndex++) {
+			int openCells = 0;
+			double percolationThreshold = 0;
+			do{
+				//Create a random position in the percolation Grid
+				int xOrdinate = StdRandom.uniform(size-1);
+				int yOrdinate = StdRandom.uniform(size-1);
+				percolation.open(xOrdinate, yOrdinate);
+				openCells ++ ;
+			}while(percolation.percolates());
+			percolationThreshold = openCells/totalCells;
+			percolationThresholds[percolationThresholds.length]=percolationThreshold;
+		}
 	}
+
+	// sample mean of percolation threshold
+	public double mean() {
+		return StdStats.mean(percolationThresholds);
+	}
+
+	// sample standard deviation of percolation threshold
+	public double stddev() {
+		return StdStats.stddev(percolationThresholds);
+	}
+
+	// returns lower bound of the 95% confidence interval
+	public double confidenceLo() {
+		return 0;
+	}
+
+	// returns upper bound of the 95% confidence interval
+	public double confidenceHi() {
+		return 0;
+	}
+
+	// test client, described below
+	public static void main(String[] args) {
+
+	}
+}
