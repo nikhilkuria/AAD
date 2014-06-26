@@ -17,11 +17,13 @@ public class PercolationStats {
 			double percolationThreshold = 0;
 			do{
 				//Create a random position in the percolation Grid
-				int xOrdinate = StdRandom.uniform(size-1);
-				int yOrdinate = StdRandom.uniform(size-1);
+				int xOrdinate = StdRandom.uniform(size);
+				int yOrdinate = StdRandom.uniform(size);
+				System.out.println("Opening Cell "+xOrdinate+", "+yOrdinate);
 				percolation.open(xOrdinate, yOrdinate);
 				openCells ++ ;
-			}while(percolation.percolates());
+			}while(!percolation.percolates());
+			System.out.println("-----------Perlocated-----------");
 			percolationThreshold = openCells/totalCells;
 			percolationThresholds[percolationThresholds.length]=percolationThreshold;
 		}
@@ -45,10 +47,11 @@ public class PercolationStats {
 	// returns upper bound of the 95% confidence interval
 	public double confidenceHi() {
 		return 0;
+		
 	}
 
 	// test client, described below
 	public static void main(String[] args) {
-
+		PercolationStats percolationStats= new PercolationStats(3, 1);
 	}
 }

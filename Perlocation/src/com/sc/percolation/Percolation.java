@@ -1,50 +1,86 @@
 package com.sc.percolation;
 
 public class Percolation {
-	
-	private int[] percolationMatrix;
-	private int[] matrixWeight;
+
+	private WeightedQuickUnionUF weightedQuickUnionUF;
+	private int size;
+	private int originCell;
+	private int finalCell;
 	
 	public Percolation(int size) {
-		// create N-by-N grid, with all sites blocked
-		percolationMatrix = new int[size];
-		matrixWeight = new int[size];
-		for (int index = 0; index < size; index++) {
-			percolationMatrix[index] = index;
-			matrixWeight[index] = 1;
+		this.size = size;
+		originCell = 0;
+		finalCell = size*size+1;
+		weightedQuickUnionUF = new WeightedQuickUnionUF(size*size+2);
+		
+		//link to the imaginary origin node to the top row
+		for (int index = 1; index <= size; index++) {
+			weightedQuickUnionUF.union(originCell, index);
 		}
-		//Add the start and end nodes as maximum and negative values
-		percolationMatrix[size] = Integer.MIN_VALUE;
-		matrixWeight[size] = 1;
-		percolationMatrix[size+1] = Integer.MAX_VALUE;
-		matrixWeight[size+1] = 1;
+		//link to the imaginary final node to the bottom row
+		for (int index = size*(size-1)+1; index <= size*size;  index ++){
+			weightedQuickUnionUF.union(index, finalCell);
+		}
 	}
 
 	public void open(int xOrdinate, int yOrdinate) {
 		// open site (row i, column j) if it is not already
-		int[] neighbours = getNeighbours(xOrdinate, yOrdinate);
-		for (int neighbour : neighbours) {
-			//Add the neighbours to the connection
+		int cellIndex = getIndex(xOrdinate, yOrdinate);
+		for (int[] neighbour : getNeighbours(xOrdinate, yOrdinate)) {
+			if(isOrdinatesOutBounds(neighbour[0], neighbour[1])){
+				int neighbourIndex = getIndex(neighbour[0], neighbour[1]);
+				weightedQuickUnionUF.union(cellIndex, neighbourIndex);
+			}
 		}
 	}
 
 	public boolean isOpen(int xOrdinate, int yOrdinate) {
-		// is site (row i, column j) open?
+		int cellIndex = getIndex(xOrdinate, yOrdinate);
+		for (int[] neighbour : getNeighbours(xOrdinate, yOrdinate)) {
+			if(isOrdinatesOutBounds(neighbour[0], neighbour[1])){
+				int neighbourIndex = getIndex(neighbour[0], neighbour[1]);
+				if(weightedQuickUnionUF.connected(cellIndex, neighbourIndex)){
+					return true;
+				}
+			}
+		}
 		return false;
+
 	}
 
 	public boolean isFull(int xOrdinate, int yOrdinate) {
-		// is site (row i, column j) full?
-		return false;
+		int cellIndex = getIndex(xOrdinate, yOrdinate);
+		return weightedQuickUnionUF.connected(cellIndex, originCell);
+
 	}
 
 	public boolean percolates() {
-		// does the system percolate?
-		return false;
+		return weightedQuickUnionUF.connected(originCell, finalCell);
+	}
+
+	private int[][] getNeighbours(int xOrdinate, int yOrdinate) {
+		int[][] neighbours = new int[4][];
+		neighbours[0] = new int[]{xOrdinate+1,yOrdinate};
+		neighbours[1] = new int[]{xOrdinate-1,yOrdinate};
+		neighbours[2] = new int[]{xOrdinate,yOrdinate+1};
+		neighbours[3] = new int[]{xOrdinate,yOrdinate-1};
+		return neighbours;
+	}
+
+	private int getIndex(int xOrdinate, int yOrdinate) {
+		// return the index position based on ordinates
+		return (size * xOrdinate) + yOrdinate + 1;
+	}
+
+	
+	private boolean isOrdinatesOutBounds(int xOrdinate, int yOrdinate) {
+		return isIndexOutBounds(xOrdinate) && isIndexOutBounds(yOrdinate);
 	}
 	
-	private int[] getNeighbours(int xOrdinate, int yOrdinate) {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean isIndexOutBounds(int ordinate) {
+		if((ordinate<0) || (ordinate>size-1)){
+			return false;
+		}
+		return true;
 	}
 }
