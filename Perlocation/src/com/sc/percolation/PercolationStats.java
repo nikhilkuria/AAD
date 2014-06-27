@@ -20,26 +20,17 @@ public class PercolationStats {
 			double percolationThreshold = 0;
 			do{
 				//Create a random position in the percolation Grid
-				int xOrdinate = StdRandom.uniform(size);
-				int yOrdinate = StdRandom.uniform(size);
+				int xOrdinate = StdRandom.uniform(1,size+1);
+				int yOrdinate = StdRandom.uniform(1,size+1);
 				if(!percolation.isOpen(xOrdinate, yOrdinate)){
 					percolation.open(xOrdinate, yOrdinate);
 					openCells ++ ;
 				}
+				percolation.isFull(xOrdinate, yOrdinate);
 			}while(!percolation.percolates());
 			percolationThreshold = openCells/totalCells;
 			percolationThresholds[expIndex]=percolationThreshold;
 		}
-/*		for (int index : new int[]{21,7,11,18,22,15,12,10,7,19,2}) {
-			Percolation percolation = new Percolation(size);
-			int xCod = index/5;
-			int yCod = (index-1)%5;
-			percolation.open(xCod, yCod);
-			if(percolation.percolates()){
-				System.out.println("Done");
-			}
-			
-		}*/
 	}
 
 	// sample mean of percolation threshold
@@ -65,11 +56,14 @@ public class PercolationStats {
 
 	// test client, described below
 	public static void main(String[] args) {
-		PercolationStats percolationStats= new PercolationStats(2, 100000);
-		System.out.println(percolationStats.mean());
-		System.out.println(percolationStats.stddev());
-		System.out.println(percolationStats.confidenceLo());
-		System.out.println(percolationStats.confidenceHi());
-
+		int gridSize = Integer.valueOf(args[0]);
+		int experiments = Integer.valueOf(args[1]);
+		if((gridSize<=0)||(experiments<=0)){
+			throw new IllegalArgumentException("Illegal input");
+		}
+		PercolationStats percolationStats= new PercolationStats(gridSize, experiments);
+		System.out.println("mean				="+percolationStats.mean());
+		System.out.println("stddev				="+percolationStats.stddev());
+		System.out.println("95% confidence interval		="+percolationStats.confidenceLo()+", "+percolationStats.confidenceHi());
 	}
 }
