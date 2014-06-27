@@ -6,22 +6,23 @@ public class Percolation {
 	private int size;
 	private int originCell;
 	private int finalCell;
-	private int totalCells;
 	private boolean[] openCells;
 	
 	public Percolation(int size) {
+		if(size<1){
+			throw new IllegalArgumentException();
+		}
 		this.size = size;
 		originCell = 0;
 		finalCell = size*size+1;
 		weightedQuickUnionUF = new WeightedQuickUnionUF(size*size+2);
 		openCells = new boolean[size*size+1];
-		totalCells = size*size;
 	}
 
 	public void open(int xOrdinate, int yOrdinate) {
 		// open site (row i, column j) if it is not already
 		int cellIndex = getIndex(xOrdinate, yOrdinate);
-		validateIndex(cellIndex);
+		validateIndex(xOrdinate, yOrdinate);
 		openCells[cellIndex] = true;
 		//System.out.println("Opening "+cellIndex);
 		connectToMockNodes(cellIndex);
@@ -39,13 +40,13 @@ public class Percolation {
 
 	public boolean isOpen(int xOrdinate, int yOrdinate) {
 		int cellIndex = getIndex(xOrdinate, yOrdinate);
-		validateIndex(cellIndex);
+		validateIndex(xOrdinate, yOrdinate);
 		return openCells[cellIndex];
 	}
 
 	public boolean isFull(int xOrdinate, int yOrdinate) {
 		int cellIndex = getIndex(xOrdinate, yOrdinate);
-		validateIndex(cellIndex);
+		validateIndex(xOrdinate, yOrdinate);
 		return weightedQuickUnionUF.connected(cellIndex, originCell);
 
 	}
@@ -95,8 +96,11 @@ public class Percolation {
 	}
 	
 
-	private void validateIndex(int cellIndex) {
-		if(cellIndex<1 || cellIndex > totalCells){
+	private void validateIndex(int xOrdinate, int yOrdinate) {
+		if(xOrdinate<1 || xOrdinate > size){
+			throw new IndexOutOfBoundsException("Out of Bounds Ball");
+		}
+		if(yOrdinate<1 || yOrdinate > size){
 			throw new IndexOutOfBoundsException("Out of Bounds Ball");
 		}
 		

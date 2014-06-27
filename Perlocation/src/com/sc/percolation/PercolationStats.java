@@ -10,6 +10,9 @@ public class PercolationStats {
 	
 	// perform T independent computational experiments on an N-by-N grid
 	public PercolationStats(int size, int experiments) {
+		if(size<1){
+			throw new IllegalArgumentException();
+		}
 		percolationThresholds = new double[experiments];
 		this.experiments = experiments;
 		double totalCells = size*size;
