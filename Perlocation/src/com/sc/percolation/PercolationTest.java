@@ -14,16 +14,18 @@ public class PercolationTest {
 	@Test
 	public void TestPercolation() throws FileNotFoundException, IOException{
 		Percolation percolation = new Percolation(4);
-		File nodesFile = new File("C:/Temp/sc/git/AAD/Perlocation/src/com/sc/percolation/nodes.txt");
-		
+		//File nodesFile = new File("C:/Temp/sc/git/AAD/Perlocation/src/com/sc/percolation/nodes.txt");
+	    File nodesFile = new File("/home/nikhil/dev/git/AAD/Perlocation/src/com/sc/percolation/nodes.txt");
 		try(BufferedReader nodeFileReader = new BufferedReader(new FileReader(nodesFile))){
 			for (String line; (line = nodeFileReader.readLine()) != null; ) {
 				int xOrdinate = Integer.valueOf(line.split(",")[0]);
 				int yOrdinate = Integer.valueOf(line.split(",")[1]);
 				System.out.println(xOrdinate+" "+yOrdinate);
 				percolation.open(xOrdinate, yOrdinate);
-				System.out.println(percolation.percolates());
 			}
+			
+			System.out.println(percolation.isFull(2, 3));
+			System.out.println(percolation.isFull(4, 3));
 		}
 		
 	}
