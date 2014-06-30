@@ -1,20 +1,27 @@
-package com.sc.unionfind;
+package com.princeton.unionfind;
 
 import com.princeton.stdlib.StdIn;
 import com.princeton.stdlib.StdOut;
-import com.princeton.stdlib.Stopwatch;
+
+/****************************************************************************
+ *  Compilation:  javac QuickFindUF.java
+ *  Execution:  java QuickFindUF < input.txt
+ *  Dependencies: StdIn.java StdOut.java
+ *
+ *  Quick-find algorithm.
+ *
+ ****************************************************************************/
 
 /**
- *  The <tt>WeightedQuickUnionUF</tt> class represents a union-find data structure.
+ *  The <tt>QuickFindUF</tt> class represents a union-find data structure.
  *  It supports the <em>union</em> and <em>find</em> operations, along with
  *  methods for determinig whether two objects are in the same component
  *  and the total number of components.
  *  <p>
- *  This implementation uses weighted quick union by size (without path compression).
+ *  This implementation uses quick find.
  *  Initializing a data structure with <em>N</em> objects takes linear time.
- *  Afterwards, <em>union</em>, <em>find</em>, and <em>connected</em> take
- *  logarithmic time (in the worst case) and <em>count</em> takes constant
- *  time.
+ *  Afterwards, <em>find</em>, <em>connected</em>, and <em>count</em>
+ *  takes constant time but <em>union</em> takes linear time.
  *  <p>
  *  For additional documentation, see <a href="http://algs4.cs.princeton.edu/15uf">Section 1.5</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
@@ -22,9 +29,8 @@ import com.princeton.stdlib.Stopwatch;
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
-public class WeightedQuickUnionUF {
-    private int[] id;    // id[i] = parent of i
-    private int[] sz;    // sz[i] = number of objects in subtree rooted at i
+public class QuickFindUF {
+    private int[] id;    // id[i] = component identifier of i
     private int count;   // number of components
 
     /**
@@ -32,14 +38,11 @@ public class WeightedQuickUnionUF {
      * @throws java.lang.IllegalArgumentException if N < 0
      * @param N the number of objects
      */
-    public WeightedQuickUnionUF(int N) {
+    public QuickFindUF(int N) {
         count = N;
         id = new int[N];
-        sz = new int[N];
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++)
             id[i] = i;
-            sz[i] = 1;
-        }
     }
 
     /**
@@ -57,23 +60,20 @@ public class WeightedQuickUnionUF {
      * @throws java.lang.IndexOutOfBoundsException unless 0 <= p < N
      */
     public int find(int p) {
-        while (p != id[p])
-            p = id[p];
-        return p;
+        return id[p];
     }
 
     /**
-     * Are the two sites <tt>p</tt> and <tt>q</tt> in the same component?
+     * Are the two sites <tt>p</tt> and <tt>q/tt> in the same component?
      * @param p the integer representing one site
      * @param q the integer representing the other site
-     * @return <tt>true</tt> if the two sites <tt>p</tt> and <tt>q</tt>
-     *    are in the same component, and <tt>false</tt> otherwise
+     * @return <tt>true</tt> if the two sites <tt>p</tt> and <tt>q</tt> are in
+     *    the same component, and <tt>false</tt> otherwise
      * @throws java.lang.IndexOutOfBoundsException unless both 0 <= p < N and 0 <= q < N
      */
     public boolean connected(int p, int q) {
-        return find(p) == find(q);
+        return id[p] == id[q];
     }
-
   
     /**
      * Merges the component containing site<tt>p</tt> with the component
@@ -83,16 +83,12 @@ public class WeightedQuickUnionUF {
      * @throws java.lang.IndexOutOfBoundsException unless both 0 <= p < N and 0 <= q < N
      */
     public void union(int p, int q) {
-        int rootP = find(p);
-        int rootQ = find(q);
-        if (rootP == rootQ) return;
-
-        // make smaller root point to larger one
-        if   (sz[rootP] < sz[rootQ]) { id[rootP] = rootQ; sz[rootQ] += sz[rootP]; }
-        else                         { id[rootQ] = rootP; sz[rootP] += sz[rootQ]; }
+        if (connected(p, q)) return;
+        int pid = id[p];
+        for (int i = 0; i < id.length; i++)
+            if (id[i] == pid) id[i] = id[q]; 
         count--;
     }
-
 
     /**
      * Reads in a sequence of pairs of integers (between 0 and N-1) from standard input, 
@@ -102,16 +98,15 @@ public class WeightedQuickUnionUF {
      */
     public static void main(String[] args) {
         int N = StdIn.readInt();
-        WeightedQuickUnionUF uf = new WeightedQuickUnionUF(N);
-        Stopwatch stopwatch = new Stopwatch();
+        QuickFindUF uf = new QuickFindUF(N);
         while (!StdIn.isEmpty()) {
             int p = StdIn.readInt();
             int q = StdIn.readInt();
             if (uf.connected(p, q)) continue;
             uf.union(p, q);
+            StdOut.println(p + " " + q);
         }
         StdOut.println(uf.count() + " components");
-        System.out.println("Took "+stopwatch.elapsedTime()+" seconds");
     }
 
 }
