@@ -23,6 +23,12 @@ public class PercolationTest {
 				System.out.println(xOrdinate+" "+yOrdinate);
 				percolation.open(xOrdinate, yOrdinate);
 			}
+
+			for (int i = 1; i < 20; i++) {
+				for (int j = 1; j < 20; j++) {
+					System.out.println(percolation.isOpen(i, j));
+				}
+			}
 			
 			System.out.println(percolation.isFull(2, 3));
 			System.out.println(percolation.isFull(4, 3));
