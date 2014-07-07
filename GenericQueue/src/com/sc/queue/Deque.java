@@ -3,44 +3,8 @@ package com.sc.queue;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class Deque<Item>
+public class Deque<Item> implements Iterable<Item>
 {
-    private class Node<Item>
-    {
-        Node(Item item){
-            this.item = item;
-        }
-        Node previousNode;
-        Node nextNode;
-        Item item;
-    }
-    
-    private class DequeIterator implements Iterator<Item>{
-
-        @Override
-        public boolean hasNext()
-        {
-            return startNode.nextNode != null;
-        }
-
-        @Override
-        public Item next()
-        {
-            if(hasNext()){
-                return (Item) startNode.nextNode.item;
-            }else{
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        @Override
-        public void remove()
-        {
-            throw new UnsupportedOperationException();
-        }
-        
-    }
-    
     private Node startNode;
     private Node endNode;
     private int dequeLength;
@@ -61,32 +25,53 @@ public class Deque<Item>
 
     public void addFirst(Item item)
     {
-        validateItem(item);
         Node node = new Node<Item>(item);
-        node.nextNode = startNode;
-        startNode = node;
+		if(startNode == null){
+			sanitizeDeque(node);
+		}else{
+			node.nextNode = startNode;
+			startNode.previousNode = node;
+			startNode = node;
+		}
+		dequeLength++;
     }
 
-    public void addLast(Item item)
+
+	public void addLast(Item item)
     {
-        validateItem(item);
-        Node node = new Node<Item>(item);
-        endNode.nextNode = node;
-        endNode = node;
+    	Node node = new Node<>(item);
+    	if(endNode == null){
+    		sanitizeDeque(node);
+    	}else{
+    		node.previousNode = endNode;
+    		endNode.nextNode = node;
+    		endNode = node;
+    	}
+    	dequeLength++;
     }
 
     public Item removeFirst()
     {
+    	if(size()<1){
+    		throw new NoSuchElementException();
+    	}
         //Should revisit this cast
         Item itemToReturn = (Item)startNode.item;
         startNode = startNode.nextNode;
+        startNode.previousNode = null;
+        dequeLength--;
         return itemToReturn;
     }
 
     public Item removeLast()
     {
+    	if(size()<1){
+    		throw new NoSuchElementException();
+    	}
         Item itemToRetuen = (Item)endNode.item;
         endNode = endNode.previousNode;
+        endNode.nextNode = null;
+        dequeLength--;
         return itemToRetuen;
     }
 
@@ -95,6 +80,16 @@ public class Deque<Item>
         return new DequeIterator();
     }
 
+    private void sanitizeDeque(Node node) {
+		if(startNode == null){
+			startNode = node;
+			endNode = node;
+			startNode.nextNode = endNode;
+			endNode.previousNode = startNode;
+		}
+		
+	}
+    
     private void validateItem(Item item)
     {
         if (item == null) {
@@ -107,6 +102,58 @@ public class Deque<Item>
     public static void main(String[] args)
     {
         Deque<Integer> deque = new Deque<>();
+        deque.addFirst(1);
+        deque.addFirst(2);
+        deque.addLast(99);
+        deque.removeFirst();
+        deque.removeLast();
+        for (Integer val : deque) {
+			System.out.println(val);
+		}
+        
+    }
+    
+    private class Node<Item>
+    {
+    	Node(){
+    		
+    	}
+    	
+        Node(Item item){
+            this.item = item;
+        }
+        Node previousNode;
+        Node nextNode;
+        Item item;
+    }
+    
+    private class DequeIterator implements Iterator<Item>{
+
+    	Node header = startNode;
+    	
+        @Override
+        public boolean hasNext()
+        {
+            return header != null;
+        }
+
+        @Override
+        public Item next()
+        {
+            if(hasNext()){
+            	Item item = (Item) header.item;
+            	header = header.nextNode;
+                return item;
+            }else{
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
         
     }
     
