@@ -25,6 +25,7 @@ public class Deque<Item> implements Iterable<Item>
 
     public void addFirst(Item item)
     {
+        validateItem(null);
         Node node = new Node<Item>(item);
 		if(startNode == null){
 			sanitizeDeque(node);
@@ -39,6 +40,7 @@ public class Deque<Item> implements Iterable<Item>
 
 	public void addLast(Item item)
     {
+	    validateItem(item);
     	Node node = new Node<>(item);
     	if(endNode == null){
     		sanitizeDeque(node);
@@ -102,6 +104,7 @@ public class Deque<Item> implements Iterable<Item>
     public static void main(String[] args)
     {
         Deque<Integer> deque = new Deque<>();
+        deque.removeFirst();
         deque.addFirst(1);
         deque.addFirst(2);
         deque.addLast(99);
@@ -145,7 +148,7 @@ public class Deque<Item> implements Iterable<Item>
             	header = header.nextNode;
                 return item;
             }else{
-                throw new UnsupportedOperationException();
+                throw new NoSuchElementException();
             }
         }
 
