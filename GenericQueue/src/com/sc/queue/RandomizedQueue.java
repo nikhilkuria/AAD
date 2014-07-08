@@ -9,8 +9,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	private final int ARRAY_SIZE_FACTOR = 20;
 
-	Item[] queue;
-	int size;
+	private Item[] queue;
+	private int size;
 
 	public RandomizedQueue() {
 		queue = (Item[]) new Object[ARRAY_SIZE_FACTOR];

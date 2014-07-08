@@ -20,28 +20,30 @@ public class Deque<Item> implements Iterable<Item> {
 	}
 
 	public void addFirst(Item item) {
-		validateItem(null);
+		validateItem(item);
 		Node node = new Node<Item>(item);
-		if (startNode == null) {
-			sanitizeDeque(node);
-		} else {
+		if(startNode != null){
 			node.nextNode = startNode;
 			startNode.previousNode = node;
-			startNode = node;
 		}
+		if(endNode == null){
+			endNode = node;
+		}
+		startNode = node;
 		dequeLength++;
 	}
 
 	public void addLast(Item item) {
 		validateItem(item);
 		Node node = new Node<>(item);
-		if (endNode == null) {
-			sanitizeDeque(node);
-		} else {
-			node.previousNode = endNode;
-			endNode.nextNode = node;
-			endNode = node;
+		if(endNode!=null){
+			endNode.nextNode=node;
+			node.previousNode=endNode;
 		}
+		if(startNode == null){
+			startNode = node;
+		}
+		endNode = node;
 		dequeLength++;
 	}
 
@@ -51,8 +53,13 @@ public class Deque<Item> implements Iterable<Item> {
 		}
 		// Should revisit this cast
 		Item itemToReturn = (Item) startNode.item;
-		startNode = startNode.nextNode;
-		startNode.previousNode = null;
+		if(startNode.nextNode!=null){
+			startNode = startNode.nextNode;
+			startNode.previousNode = null;
+		}else{
+			startNode = null;
+			endNode = null;
+		}
 		dequeLength--;
 		return itemToReturn;
 	}
@@ -62,8 +69,14 @@ public class Deque<Item> implements Iterable<Item> {
 			throw new NoSuchElementException();
 		}
 		Item itemToRetuen = (Item) endNode.item;
-		endNode = endNode.previousNode;
-		endNode.nextNode = null;
+		if(endNode.previousNode!=null){
+			endNode = endNode.previousNode;
+			endNode.nextNode = null;
+		}else{
+			startNode = null;
+			endNode = null;
+		}
+
 		dequeLength--;
 		return itemToRetuen;
 	}
@@ -76,8 +89,6 @@ public class Deque<Item> implements Iterable<Item> {
 		if (startNode == null) {
 			startNode = node;
 			endNode = node;
-			startNode.nextNode = endNode;
-			endNode.previousNode = startNode;
 		}
 
 	}
@@ -93,10 +104,13 @@ public class Deque<Item> implements Iterable<Item> {
 	public static void main(String[] args) {
 		Deque<Integer> deque = new Deque<>();
 		deque.addFirst(1);
-		deque.addFirst(2);
-		deque.addLast(99);
-		deque.removeFirst();
+		deque.addLast(2);
+		deque.addLast(3);
+		deque.addFirst(0);
 		deque.removeLast();
+		deque.removeFirst();
+		deque.removeFirst();
+		deque.removeFirst();
 		for (Integer val : deque) {
 			System.out.println(val);
 		}
