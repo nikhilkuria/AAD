@@ -95,7 +95,7 @@ public class Deque<Item> implements Iterable<Item> {
 
 	private void validateItem(Item item) {
 		if (item == null) {
-			throw new NoSuchElementException(
+			throw new NullPointerException(
 					"No place for foul creatures like you");
 		}
 

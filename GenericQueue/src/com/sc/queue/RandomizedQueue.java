@@ -70,19 +70,21 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	public static void main(String[] args) {
 		RandomizedQueue<Integer> queue = new RandomizedQueue<>();
 
-		queue.dequeue();
-		queue.enqueue(1);
+/*		queue.enqueue(1);
 		queue.enqueue(2);
 		queue.enqueue(3);
 		queue.enqueue(4);
 		queue.enqueue(5);
-		queue.enqueue(6);
+		queue.enqueue(6);*/
+/*		for (int i = 0; i < 100000; i++) {
+			queue.enqueue(i);
+		}*/
 
-		// System.out.println(queue.dequeue());
-		// System.out.println(queue.dequeue());
+		//System.out.println(queue.dequeue());
+		//System.out.println(queue.dequeue());
 
 		for (Integer integer : queue) {
-			// System.out.println(integer);
+			System.out.println(integer);
 		}
 	}
 
@@ -112,7 +114,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	private void validateItem(Item item) {
 		if (item == null) {
-			throw new NoSuchElementException(
+			throw new NullPointerException(
 					"No place for foul creatures like you");
 		}
 
@@ -120,20 +122,37 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	private class RandomQueueIterator implements Iterator<Item> {
 
-		Item[] randomQueue = queue;
-		int index = 0;
+		int size;
+		private int[] usedIndices;
 
+		public RandomQueueIterator(){
+			size = size();
+			usedIndices = new int[size];
+			for (int i = 0; i < size; i++) {
+				usedIndices[i] = -1;
+			}
+		}
+		
 		public boolean hasNext() {
-			return randomQueue[index] == null ? false : true;
+			return size == 0 ? false : true;
 		}
 
 		public Item next() {
-			Item item = randomQueue[index];
+			int index = getRandomNumber();
+			Item item = queue[index];
 			if (item == null) {
 				throw new NoSuchElementException();
 			}
-			index++;
+			usedIndices[index] = index;
 			return item;
+		}
+
+		private int getRandomNumber() {
+			int randomIndex = StdRandom.uniform(0, size);
+			while(usedIndices[randomIndex] == randomIndex){
+				randomIndex = StdRandom.uniform(0, size);
+			}
+			return randomIndex;
 		}
 
 		public void remove() {
