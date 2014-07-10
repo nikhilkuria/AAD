@@ -13,6 +13,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     private Item[] queue;
     private int size;
+    private int head;
 
     public RandomizedQueue()
     {
@@ -34,10 +35,11 @@ public class RandomizedQueue<Item> implements Iterable<Item>
     public void enqueue(Item item)
     {
         validateItem(item);
-        if (size == queue.length) {
+        if (head == queue.length) {
             resize(queue.length * 2);
         }
-        queue[size] = item;
+        queue[head] = item;
+        head++;
         size++;
     }
 
@@ -46,12 +48,16 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         if (size() < 1) {
             throw new NoSuchElementException();
         }
-        if (size < queue.length / 4) {
+   /*     if (size < queue.length / 4) {
             resize(queue.length / 2);
-        }
+        }*/
         int randomIndex = getRandomNumber();
         size--;
         Item randomItem = queue[randomIndex];
+        while(randomItem==null){
+            randomIndex = getRandomNumber();
+            randomItem = queue[randomIndex];
+        }
         removeItem(randomIndex);
         // System.out.println("Removing element from index :"+randomIndex);
 
@@ -80,47 +86,12 @@ public class RandomizedQueue<Item> implements Iterable<Item>
     {
         RandomizedQueue<Integer> queue = new RandomizedQueue<>();
         Stopwatch watch = new Stopwatch();
-		for (int i = 1; i < 1280000; i++) {
-		    //System.out.println(i);
-		    /*if(i%7==0){
-		        //System.out.println("Deque");
-		        queue.dequeue();
-		    }else if(i%13==0){
-	              //System.out.println("Sample");
-		        queue.sample();
-		    }else if(i%9==0){
-	              //System.out.println("Empty");
-		        queue.isEmpty();
-		    }else if(i%15==0){
-		        queue.size();
-		    }
-		    else{
-		          //System.out.println("Enque");
-		          queue.enqueue(i);
-		    }*/
-		    queue.enqueue(i);
-		}
-		System.out.println(watch.elapsedTime());
-	      for (int i = 1; i < 1280000; i++) {
-	            //System.out.println(i);
-	            /*if(i%7==0){
-	                //System.out.println("Deque");
-	                queue.dequeue();
-	            }else if(i%13==0){
-	                  //System.out.println("Sample");
-	                queue.sample();
-	            }else if(i%9==0){
-	                  //System.out.println("Empty");
-	                queue.isEmpty();
-	            }else if(i%15==0){
-	                queue.size();
-	            }
-	            else{
-	                  //System.out.println("Enque");
-	                  queue.enqueue(i);
-	            }*/
-	            queue.dequeue();
-	        }
+        queue.enqueue(100001);
+        queue.dequeue();
+        queue.enqueue(1);
+        queue.dequeue();
+
+
 		System.out.println(watch.elapsedTime());
     }
 
@@ -136,19 +107,20 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     private int getRandomNumber()
     {
-        return StdRandom.uniform(0, size());
+        return StdRandom.uniform(0, queue.length);
     }
 
     private void removeItem(int removeIndex)
     {
-       for (int index = removeIndex; index < size(); index++) {
+/*       for (int index = removeIndex; index < size(); index++) {
             Item newValue = queue[index + 1];
             if (newValue == null) {
                 return;
             }
             queue[index] = newValue;
         }
-        queue[size()] = null;
+        queue[size()] = null;*/
+        queue[removeIndex] = null;
     }
 
     private void validateItem(Item item)
@@ -169,7 +141,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         public RandomQueueIterator()
         {
             size = size();
-            usedIndices = new int[size];
+            usedIndices = new int[queue.length];
             for (int i = 0; i < size; i++) {
                 usedIndices[i] = -1;
             }
@@ -185,8 +157,9 @@ public class RandomizedQueue<Item> implements Iterable<Item>
             if(hasNext()){
                 int index = getRandomNumber();
                 Item item = queue[index];
-                if (item == null) {
-                    throw new NoSuchElementException();
+                while (item == null) {
+                    index = getRandomNumber();
+                    item = queue[index];
                 }
                 usedIndices[index] = index;
                 size--;
@@ -200,9 +173,9 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
         private int getRandomNumber()
         {
-            int randomIndex = StdRandom.uniform(0, usedIndices.length);
+            int randomIndex = StdRandom.uniform(0, queue.length);
             while (usedIndices[randomIndex] == randomIndex) {
-                randomIndex = StdRandom.uniform(0, usedIndices.length);
+                randomIndex = StdRandom.uniform(0, queue.length);
             }
             return randomIndex;
         }
