@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.princeton.stdlib.StdRandom;
-import com.princeton.stdlib.Stopwatch;
 
 public class RandomizedQueue<Item> implements Iterable<Item>
 {
@@ -13,7 +12,6 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     private Item[] queue;
     private int size;
-    private int head;
 
     public RandomizedQueue()
     {
@@ -35,11 +33,10 @@ public class RandomizedQueue<Item> implements Iterable<Item>
     public void enqueue(Item item)
     {
         validateItem(item);
-        if (head == queue.length) {
+        if (size == queue.length) {
             resize(queue.length * 2);
         }
-        queue[head] = item;
-        head++;
+        queue[size] = item;
         size++;
     }
 
@@ -48,18 +45,14 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         if (size() < 1) {
             throw new NoSuchElementException();
         }
-   /*     if (size < queue.length / 4) {
-            resize(queue.length / 2);
-        }*/
         int randomIndex = getRandomNumber();
-        size--;
         Item randomItem = queue[randomIndex];
-        while(randomItem==null){
-            randomIndex = getRandomNumber();
-            randomItem = queue[randomIndex];
+        size--;
+        queue[randomIndex] = queue[size];
+        queue[size] = null;
+        if (size < queue.length / 4) {
+            resize(queue.length / 2);
         }
-        removeItem(randomIndex);
-        // System.out.println("Removing element from index :"+randomIndex);
 
         return randomItem;
 
@@ -84,20 +77,11 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     public static void main(String[] args)
     {
-        RandomizedQueue<Integer> queue = new RandomizedQueue<>();
-        Stopwatch watch = new Stopwatch();
-        queue.enqueue(100001);
-        queue.dequeue();
-        queue.enqueue(1);
-        queue.dequeue();
-
-
-		System.out.println(watch.elapsedTime());
+       
     }
 
     private void resize(int length)
     {
-        // System.out.println("Resizing Array : "+queue.length+" to "+length);
         Item[] tempQueue = (Item[]) new Object[length];
         for (int index = 0; index < size(); index++) {
             tempQueue[index] = queue[index];
@@ -107,20 +91,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
     private int getRandomNumber()
     {
-        return StdRandom.uniform(0, queue.length);
-    }
-
-    private void removeItem(int removeIndex)
-    {
-/*       for (int index = removeIndex; index < size(); index++) {
-            Item newValue = queue[index + 1];
-            if (newValue == null) {
-                return;
-            }
-            queue[index] = newValue;
-        }
-        queue[size()] = null;*/
-        queue[removeIndex] = null;
+        return StdRandom.uniform(0, size());
     }
 
     private void validateItem(Item item)
@@ -141,7 +112,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
         public RandomQueueIterator()
         {
             size = size();
-            usedIndices = new int[queue.length];
+            usedIndices = new int[size];
             for (int i = 0; i < size; i++) {
                 usedIndices[i] = -1;
             }
@@ -157,9 +128,8 @@ public class RandomizedQueue<Item> implements Iterable<Item>
             if(hasNext()){
                 int index = getRandomNumber();
                 Item item = queue[index];
-                while (item == null) {
-                    index = getRandomNumber();
-                    item = queue[index];
+                if (item == null) {
+                    throw new NoSuchElementException();
                 }
                 usedIndices[index] = index;
                 size--;
@@ -173,9 +143,9 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
         private int getRandomNumber()
         {
-            int randomIndex = StdRandom.uniform(0, queue.length);
+            int randomIndex = StdRandom.uniform(0, usedIndices.length);
             while (usedIndices[randomIndex] == randomIndex) {
-                randomIndex = StdRandom.uniform(0, queue.length);
+                randomIndex = StdRandom.uniform(0, usedIndices.length);
             }
             return randomIndex;
         }
