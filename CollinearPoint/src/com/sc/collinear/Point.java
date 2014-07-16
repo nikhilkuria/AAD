@@ -4,7 +4,8 @@ import java.util.Comparator;
 
 import com.princeton.stdlib.StdDraw;
 
-public class Point implements Comparable<Point> {
+public class Point implements Comparable<Point>
+{
 
     public final Comparator<Point> SLOPE_ORDER = new Comparator<Point>()
     {
@@ -13,46 +14,77 @@ public class Point implements Comparable<Point> {
         {
             double slope1 = slopeTo(point1);
             double slope2 = slopeTo(point2);
-            
+
             //Comparing the slopes
-            if(slope1<slope2){
+            if (slope1 < slope2) {
                 return -1;
-            }else if(slope1>slope2){
+            }
+            else if (slope1 > slope2) {
                 return 1;
-            }else{
+            }
+            else {
                 return 0;
             }
         }
-    }; 
-    private final int x;                              // x coordinate
-    private final int y;                              // y coordinate
+    };
+    private final int x; // x coordinate
+    private final int y; // y coordinate
 
-    public Point(int x, int y) {
+    public Point(int x, int y)
+    {
         this.x = x;
         this.y = y;
     }
 
-    public void draw() {
+    public void draw()
+    {
         StdDraw.point(x, y);
     }
 
-    public void drawTo(Point that) {
+    public void drawTo(Point that)
+    {
         StdDraw.line(this.x, this.y, that.x, that.y);
     }
 
-    public double slopeTo(Point that) {
-        return 0;
+    public double slopeTo(Point that)
+    {
+        //Check for slope = 0 
+        if(this.y==that.y){
+            return 0;
+        }
+        //Check for slop = inf
+        if(this.x==that.x){
+            return Double.POSITIVE_INFINITY;
+        }
+        return (that.y-this.y)/(that.y-this.y);
     }
 
-    public int compareTo(Point that) {
-        return 0;
+    public int compareTo(Point that)
+    {
+        if (this.y < that.y) {
+            return -1;
+        }
+        else if (this.y > that.y) {
+            return 1;
+        }
+        else if (this.x < that.x) {
+            return -1;
+        }
+        else if (this.x > that.x) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
     }
 
-    public String toString() {
+    public String toString()
+    {
         return "(" + x + ", " + y + ")";
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         /* YOUR CODE HERE */
     }
 
