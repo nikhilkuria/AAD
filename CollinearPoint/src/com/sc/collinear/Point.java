@@ -56,7 +56,8 @@ public class Point implements Comparable<Point>
         if(this.x==that.x){
             return Double.POSITIVE_INFINITY;
         }
-        return (that.y-this.y)/(that.y-this.y);
+        return new Double((that.y - this.y)).doubleValue()
+				/ new Double(that.x - this.x).doubleValue();
     }
 
     public int compareTo(Point that)
