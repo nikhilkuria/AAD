@@ -1,15 +1,20 @@
 package com.sc.collinear;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import com.princeton.stdlib.In;
 import com.princeton.stdlib.StdDraw;
-import com.sc.sort.elementary.Insertion;
 
 public class Fast {
 
 	private static final String POINT_SEPARATOR = " -> ";
+	private static Set<List<Point>> lines = new HashSet<>();
 	
 	public static void main(String args[]){
 		initilizeCanvas();
@@ -24,36 +29,56 @@ public class Fast {
 			Point[] sortPoints = Arrays.copyOf(points, points.length);
 			printsLinesFromOrigin(originPoint, sortPoints);
 		}
+		for (List<Point> line : lines) {
+			Object[] lineArray = line.toArray();
+			for (int index = 0; index < lineArray.length; index++) {
+				System.out.print(lineArray[index].toString());
+				if(index<lineArray.length-1){
+					System.out.print(POINT_SEPARATOR);
+				}
+			}
+			System.out.println();
+		}
 		
 	}
 
 	private static void printsLinesFromOrigin(Point originPoint, Point[] points) {
 		Arrays.sort(points, new SlopeComparator(originPoint));
-		StringBuilder lineBuilder = new StringBuilder(originPoint.toString()+POINT_SEPARATOR);
+		List<Point> line = new ArrayList<>();
 		int pointsCount = 1;
 		for (int index = 0; index < points.length; index++) {
 			Point point = points[index];
 			if(pointsCount==1){
-				lineBuilder.append(point.toString()+POINT_SEPARATOR);
+				line.add(point);
 				pointsCount++;
 				continue;
 			}
 			Point previousPoint = points[index-1];
 			if(originPoint.slopeTo(point)==originPoint.slopeTo(previousPoint)){
 				pointsCount++;
-				lineBuilder.append(point.toString()+POINT_SEPARATOR);
+				line.add(point);
 			}else{
 				if(pointsCount>3){
-					System.out.println(lineBuilder);
+					Collections.sort(line);
+	/*				for (Point linePoint : line) {
+						System.out.print(linePoint.toString()+POINT_SEPARATOR);
+					}
+					System.out.println();*/
+					lines.add(line);
 				}
 				pointsCount=2;
-				lineBuilder.setLength(0);
-				lineBuilder.append(originPoint.toString()+POINT_SEPARATOR);
-				lineBuilder.append(point.toString()+POINT_SEPARATOR);
+				line = new ArrayList<>();
+				line.add(originPoint);
+				line.add(point);
 			}
 		}
 		if(pointsCount>3){
-			System.out.println(lineBuilder);
+			Collections.sort(line);
+/*			for (Point linePoint : line) {
+				System.out.print(linePoint.toString()+POINT_SEPARATOR);
+			}
+			System.out.println();*/
+			lines.add(line);
 		}
 	}
 
