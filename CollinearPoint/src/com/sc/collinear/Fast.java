@@ -5,9 +5,12 @@ import java.util.Comparator;
 
 import com.princeton.stdlib.In;
 import com.princeton.stdlib.StdDraw;
+import com.sc.sort.elementary.Insertion;
 
 public class Fast {
 
+	private static final String POINT_SEPARATOR = " -> ";
+	
 	public static void main(String args[]){
 		initilizeCanvas();
 		String filename = args[0];
@@ -21,17 +24,42 @@ public class Fast {
 			SlopeComparator slopeComparator = new SlopeComparator(originPoint);
 			Arrays.sort(points, slopeComparator);
 			findLinesFromOrigin(originPoint,points);
-			//printSlopes(points, originPoint);
 		}
 	}
 
 	private static void findLinesFromOrigin(Point originPoint, Point[] points) {
 		double[] slopes = new double[points.length];
+		StringBuilder line = new StringBuilder();
+		boolean lineFound = false;
+		int pointsInLine=0;
 		for (int index = 0; index < points.length; index++) {
 			slopes[index] = originPoint.slopeTo(points[index]);
 		}
+		line.append(originPoint.toString()+POINT_SEPARATOR);
+		for (int index = 0; index < slopes.length-1; index++) {
+			if(points[index]==originPoint){
+				continue;
+			}
+			if(!lineFound){
+				line.append(points[index].toString()+ POINT_SEPARATOR);
+				pointsInLine++;
+			}
+			if(slopes[index]==slopes[index+1]){
+				lineFound = true;
+				pointsInLine++;
+				line.append(points[index+1].toString() + POINT_SEPARATOR);
+			}else{
+				lineFound=false;
+				if(pointsInLine>3){
+					System.out.println(line);
+				}
+				pointsInLine = 0;
+				line.setLength(0);
+				line.append(originPoint.toString()+POINT_SEPARATOR);
+			}
+		}
 	}
-
+	
 	private static void printSlopes(Point[] points, Point originPoint) {
 		for (Point point : points) {
 			System.out.print(originPoint.slopeTo(point)+" ");
