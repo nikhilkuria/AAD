@@ -45,9 +45,13 @@ public class Fast {
 	private static void printsLinesFromOrigin(Point originPoint, Point[] points) {
 		Arrays.sort(points, new SlopeComparator(originPoint));
 		List<Point> line = new ArrayList<>();
+		line.add(originPoint);
 		int pointsCount = 1;
 		for (int index = 0; index < points.length; index++) {
 			Point point = points[index];
+			if(point==originPoint){
+				continue;
+			}
 			if(pointsCount==1){
 				line.add(point);
 				pointsCount++;
