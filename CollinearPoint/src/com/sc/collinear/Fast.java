@@ -19,47 +19,44 @@ public class Fast {
 	}
 	
 	private static void findCollinearPoints(Point[] points) {
-		for (int originIndex = 0; originIndex < points.length; originIndex++) {
+		for (int originIndex = points.length-1; originIndex >= 0; originIndex--) {
 			Point originPoint = points[originIndex];
-			SlopeComparator slopeComparator = new SlopeComparator(originPoint);
-			Arrays.sort(points, slopeComparator);
-			findLinesFromOrigin(originPoint,points);
+			Point[] sortPoints = Arrays.copyOf(points, points.length);
+			printsLinesFromOrigin(originPoint, sortPoints);
+		}
+		
+	}
+
+	private static void printsLinesFromOrigin(Point originPoint, Point[] points) {
+		Arrays.sort(points, new SlopeComparator(originPoint));
+		StringBuilder lineBuilder = new StringBuilder(originPoint.toString()+POINT_SEPARATOR);
+		int pointsCount = 1;
+		for (int index = 0; index < points.length; index++) {
+			Point point = points[index];
+			if(pointsCount==1){
+				lineBuilder.append(point.toString()+POINT_SEPARATOR);
+				pointsCount++;
+				continue;
+			}
+			Point previousPoint = points[index-1];
+			if(originPoint.slopeTo(point)==originPoint.slopeTo(previousPoint)){
+				pointsCount++;
+				lineBuilder.append(point.toString()+POINT_SEPARATOR);
+			}else{
+				if(pointsCount>3){
+					System.out.println(lineBuilder);
+				}
+				pointsCount=2;
+				lineBuilder.setLength(0);
+				lineBuilder.append(originPoint.toString()+POINT_SEPARATOR);
+				lineBuilder.append(point.toString()+POINT_SEPARATOR);
+			}
+		}
+		if(pointsCount>3){
+			System.out.println(lineBuilder);
 		}
 	}
 
-	private static void findLinesFromOrigin(Point originPoint, Point[] points) {
-		double[] slopes = new double[points.length];
-		StringBuilder line = new StringBuilder();
-		boolean lineFound = false;
-		int pointsInLine=0;
-		for (int index = 0; index < points.length; index++) {
-			slopes[index] = originPoint.slopeTo(points[index]);
-		}
-		line.append(originPoint.toString()+POINT_SEPARATOR);
-		for (int index = 0; index < slopes.length-1; index++) {
-			if(points[index]==originPoint){
-				continue;
-			}
-			if(!lineFound){
-				line.append(points[index].toString()+ POINT_SEPARATOR);
-				pointsInLine++;
-			}
-			if(slopes[index]==slopes[index+1]){
-				lineFound = true;
-				pointsInLine++;
-				line.append(points[index+1].toString() + POINT_SEPARATOR);
-			}else{
-				lineFound=false;
-				if(pointsInLine>3){
-					System.out.println(line);
-				}
-				pointsInLine = 0;
-				line.setLength(0);
-				line.append(originPoint.toString()+POINT_SEPARATOR);
-			}
-		}
-	}
-	
 	private static void printSlopes(Point[] points, Point originPoint) {
 		for (Point point : points) {
 			System.out.print(originPoint.slopeTo(point)+" ");
