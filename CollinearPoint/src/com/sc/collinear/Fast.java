@@ -17,7 +17,7 @@ public class Fast {
 	private static Set<List<Point>> lines = new HashSet<>();
 	
 	public static void main(String args[]){
-		initilizeCanvas();
+		//initilizeCanvas();
 		String filename = args[0];
 		Point[] points = generatePointList(filename);
 		findCollinearPoints(points);
@@ -29,9 +29,21 @@ public class Fast {
 			Point[] sortPoints = Arrays.copyOf(points, points.length);
 			printsLinesFromOrigin(originPoint, sortPoints);
 		}
+		Point startPoint = null;
+		Point endPoint = null;
 		for (List<Point> line : lines) {
 		    Point[] lineArray = line.toArray(new Point[line.size()]);
-		    lineArray[0].drawTo(lineArray[lineArray.length-1]);
+		    Point currentStartPoint = lineArray[0];
+	        Point currentEndPoint = lineArray[lineArray.length-1];
+            if(startPoint==null){
+                startPoint = currentStartPoint;
+                endPoint = currentEndPoint;
+            }else{
+                if((currentEndPoint.slopeTo(endPoint)==Double.NEGATIVE_INFINITY) && (currentStartPoint.slopeTo(startPoint)==Double.NEGATIVE_INFINITY)){
+                    continue;
+                }
+            }
+		    //currentStartPoint.drawTo(currentEndPoint);
 			for (int index = 0; index < lineArray.length; index++) {
 				System.out.print(lineArray[index].toString());
 				if(index<lineArray.length-1){
@@ -40,6 +52,7 @@ public class Fast {
 			}
 			System.out.println();
 		}
+		lines.clear();
 		
 	}
 
@@ -64,6 +77,9 @@ public class Fast {
 			     backtrackIndex++;
 		         previousPoint = points[index-backtrackIndex];
 			}while(previousPoint==originPoint);
+			if(point.slopeTo(previousPoint)==Double.NEGATIVE_INFINITY){
+			    continue;
+			}
 			backtrackIndex = 0;
 			if(originPoint.slopeTo(point)==originPoint.slopeTo(previousPoint)){
 				pointsCount++;
@@ -101,7 +117,7 @@ public class Fast {
 			int y = in.readInt();
 			Point point = new Point(x, y);
 			points[i] = point;
-			point.draw();
+			//point.draw();
 		}
 		return points;
 	}
@@ -114,7 +130,7 @@ public class Fast {
 		StdDraw.setPenRadius(.008);
 	}
 	
-	static class SlopeComparator implements Comparator<Point>{
+	private static class SlopeComparator implements Comparator<Point>{
 		private Point originPoint;
 		public SlopeComparator(Point originPoint){
 			this.originPoint = originPoint;
