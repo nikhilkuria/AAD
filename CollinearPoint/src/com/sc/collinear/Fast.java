@@ -30,7 +30,8 @@ public class Fast {
 			printsLinesFromOrigin(originPoint, sortPoints);
 		}
 		for (List<Point> line : lines) {
-			Object[] lineArray = line.toArray();
+		    Point[] lineArray = line.toArray(new Point[line.size()]);
+		    lineArray[0].drawTo(lineArray[lineArray.length-1]);
 			for (int index = 0; index < lineArray.length; index++) {
 				System.out.print(lineArray[index].toString());
 				if(index<lineArray.length-1){
@@ -57,17 +58,19 @@ public class Fast {
 				pointsCount++;
 				continue;
 			}
-			Point previousPoint = points[index-1];
+			Point previousPoint =null;
+			int backtrackIndex = 0;
+			do{
+			     backtrackIndex++;
+		         previousPoint = points[index-backtrackIndex];
+			}while(previousPoint==originPoint);
+			backtrackIndex = 0;
 			if(originPoint.slopeTo(point)==originPoint.slopeTo(previousPoint)){
 				pointsCount++;
 				line.add(point);
 			}else{
 				if(pointsCount>3){
 					Collections.sort(line);
-	/*				for (Point linePoint : line) {
-						System.out.print(linePoint.toString()+POINT_SEPARATOR);
-					}
-					System.out.println();*/
 					lines.add(line);
 				}
 				pointsCount=2;
@@ -78,10 +81,6 @@ public class Fast {
 		}
 		if(pointsCount>3){
 			Collections.sort(line);
-/*			for (Point linePoint : line) {
-				System.out.print(linePoint.toString()+POINT_SEPARATOR);
-			}
-			System.out.println();*/
 			lines.add(line);
 		}
 	}
