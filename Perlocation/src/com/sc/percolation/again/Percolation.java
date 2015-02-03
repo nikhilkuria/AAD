@@ -6,13 +6,30 @@ public class Percolation {
 	
 	private int[] grid;
 	private int[] componentHeight;
+	private int initialNode;
+	private int finalNode;
 	
-	public Percolation(int gridSize) {
-		grid = new int[gridSize*gridSize];
-		componentHeight = new int[gridSize*gridSize];
-		for (int index = 0; index < gridSize*gridSize; index++) {
+	public Percolation(int gridDimension) {
+		int totalGridSize = gridDimension*gridDimension;
+		grid = new int[totalGridSize+2];
+		componentHeight = new int[totalGridSize+2];
+		initialNode = totalGridSize;
+		finalNode = totalGridSize+1;
+		for (int index = 0; index < totalGridSize+2; index++) {
 			componentHeight[index] = 0;
 			grid[index] = index;
+		}
+		performInitialLinks(gridDimension);
+	}
+
+	private void performInitialLinks(int gridDimension) {
+		//Link Initial Node to top row
+		for (int topRowNode = 0; topRowNode < gridDimension; topRowNode++) {
+			connect(topRowNode, initialNode);
+		}
+		//Link bottom row to final Node
+		for (int bottomRowNode = (gridDimension*(gridDimension-1)); bottomRowNode < gridDimension*gridDimension; bottomRowNode++) {
+			connect(bottomRowNode, finalNode);
 		}
 	}
 
