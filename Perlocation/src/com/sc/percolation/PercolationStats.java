@@ -1,6 +1,5 @@
 package com.sc.percolation;
 
-import com.princeton.stdlib.StdDraw;
 import com.princeton.stdlib.StdRandom;
 import com.princeton.stdlib.StdStats;
 
@@ -27,16 +26,12 @@ public class PercolationStats
             Percolation percolation = new Percolation(size);
             double openCells = 0;
             double percolationThreshold = 0;
-            PercolationVisualizer.draw(percolation,size);
-            StdDraw.show(0);
             do {
                 //Create a random position in the percolation Grid
                 int xOrdinate = StdRandom.uniform(1, size + 1);
                 int yOrdinate = StdRandom.uniform(1, size + 1);
                 if (!percolation.isOpen(xOrdinate, yOrdinate)) {
                     percolation.open(xOrdinate, yOrdinate);
-                    PercolationVisualizer.draw(percolation, size);
-                    StdDraw.show(500);
                     openCells++;
                 }
                 percolation.isFull(xOrdinate, yOrdinate);

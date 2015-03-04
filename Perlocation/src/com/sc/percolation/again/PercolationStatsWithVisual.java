@@ -2,7 +2,6 @@ package com.sc.percolation.again;
 
 import com.princeton.stdlib.StdDraw;
 import com.princeton.stdlib.StdIn;
-import com.princeton.stdlib.StdRandom;
 import com.princeton.stdlib.StdStats;
 
 public class PercolationStatsWithVisual {
@@ -31,6 +30,8 @@ public class PercolationStatsWithVisual {
                 //Create a random position in the percolation Grid
                 int xOrdinate = StdIn.readInt();;
                 int yOrdinate = StdIn.readInt();;
+/*                int xOrdinate = StdRandom.uniform(1, gridDimension+1);
+                int yOrdinate = StdRandom.uniform(1, gridDimension+1);*/
                 if(!percolation.isOpen(xOrdinate, yOrdinate)){
                     percolation.open(xOrdinate, yOrdinate);
                     PercolationVisualizer.draw(percolation, gridDimension);
