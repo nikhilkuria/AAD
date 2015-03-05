@@ -38,10 +38,6 @@ public class Fast
                 }
                 if ((linePoints.isEmpty())
                         || (linePoints.get(0).slopeTo(originPoint) == slope)) {
-                    if(originPoint.compareTo(point)==1){
-                        linePoints.clear();
-                        break;
-                    }
                     linePoints.add(point);
                 }
                 else {
@@ -49,9 +45,8 @@ public class Fast
                         printLine(originPoint, linePoints);
                     }
                     resetLinePoint(linePoints);
-                    if(originPoint.compareTo(point)!=1){
                         linePoints.add(point);
-                    }
+
 
                 }
             }
@@ -71,6 +66,11 @@ public class Fast
 
     private static void printLine(Point originPoint, List<Point> linePoints)
     {
+        for (Point point : linePoints) {
+            if(originPoint.compareTo(point)>0){
+                return;
+            }
+        }
         linePoints.add(originPoint);
         Collections.sort(linePoints);
         System.out.print(linePoints.get(0));
